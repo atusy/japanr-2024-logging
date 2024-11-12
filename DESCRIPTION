@@ -1,0 +1,7 @@
+Depends: R >= 4.3.0
+Imports:
+  logger,
+  openmeteo,
+  promises,
+  shiny
+
