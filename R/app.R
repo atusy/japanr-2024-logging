@@ -33,9 +33,20 @@ server <- function(input, output, session) {
   output$weather <- shiny::renderUI({
     locations() |>
       lapply(function(x) {
-        p <- plot_weather_forecast(x)
-        shiny::renderPlot(p, res = 100)
+        shiny::plotOutput(outputId = paste0("weather_", x))
       })
+  })
+
+  shiny::observe({
+    lapply(locations(), function(location) {
+      plot_id <- paste0("weather_", location)
+      output[[plot_id]] <- shiny::renderPlot(
+        {
+          plot_weather_forecast(location)
+        },
+        res = 100
+      )
+    })
   })
 }
 
