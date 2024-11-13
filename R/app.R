@@ -30,16 +30,19 @@ server <- function(input, output, session) {
       unlist()
   })
 
-  output$weather <- shiny::renderPlot(
-    plot_weather_forecast(locations()[[1L]]),
-    res = 100
-  )
+  output$weather <- shiny::renderUI({
+    locations() |>
+      lapply(function(x) {
+        p <- plot_weather_forecast(x)
+        shiny::renderPlot(p, res = 100)
+      })
+  })
 }
 
 ui <- function() {
   shiny::basicPage(
-    shiny::textInput("locations", "locations", "tokyo"),
-    shiny::plotOutput("weather")
+    shiny::textInput("locations", "locations", c("tokyo, london")),
+    shiny::uiOutput("weather")
   )
 }
 
