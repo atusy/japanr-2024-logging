@@ -23,6 +23,20 @@ plot_weather_forecast <- function(x) {
 }
 
 server <- function(input, output, session) {
+  oldplan <- future::plan()
+  on.exit(future::plan(oldplan))
+  if (.Platform$OS.type == "windows") {
+    future::plan(
+      future::multisession,
+      workers = min(5L, future::availableCores())
+    )
+  } else {
+    future::plan(
+      future::multicore,
+      workers = min(5L, future::availableCores(constraints = "multicore"))
+    )
+  }
+
   locations <- shiny::reactive({
     shiny::req(input$locations)
     input$locations |>
