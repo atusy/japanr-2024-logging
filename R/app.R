@@ -40,12 +40,17 @@ server <- function(input, output, session) {
   shiny::observe({
     lapply(locations(), function(location) {
       plot_id <- paste0("weather_", location)
-      output[[plot_id]] <- shiny::renderPlot(
-        {
-          plot_weather_forecast(location)
-        },
-        res = 100
-      )
+      future::future({
+        plot_weather_forecast(location)
+      }) |>
+        promises::then(function(x) {
+          output[[plot_id]] <- shiny::renderPlot(
+            {
+              x
+            },
+            res = 100
+          )
+        })
     })
   })
 }
