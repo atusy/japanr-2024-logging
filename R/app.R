@@ -1,8 +1,3 @@
-logger::log_formatter(logger::formatter_json)
-logger::log_layout(
-  logger::layout_json_parser(fields = c("time", "level", "ns"))
-)
-
 log <- function(level, message, ctx = list()) {
   purrr::exec(logger::log_level, level, message = message, !!!ctx)
 }
