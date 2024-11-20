@@ -39,7 +39,7 @@ server <- function(input, output, session) {
   logger::log_threshold(logger::DEBUG)
 
   # Log session start
-  session_id <- RcppUUID::uuid_generate_random()
+  session_id <- ulid::ulid()
   logger::log_info(message = "Session started", session_id = session_id)
 
   # Configure logger
@@ -54,7 +54,7 @@ server <- function(input, output, session) {
   # Record request ID and optionally log request parameters
   shiny::observe({
     params <- shiny::reactiveValuesToList(input)
-    trace_id(RcppUUID::uuid_generate_random())
+    trace_id(ulid::ulid())
     log(logger::DEBUG,
       "Request received",
       c(list(request_params = params), ctx())
@@ -100,7 +100,7 @@ server <- function(input, output, session) {
   shiny::observe({
     lapply(locations(), function(location) {
       ctx_span <- c(
-        list(location = location, span_id = RcppUUID::uuid_generate_random()),
+        list(location = location, span_id = ulid::ulid()),
         ctx()
       )
       log(logger::DEBUG, "Processing location", ctx_span)
