@@ -1,6 +1,6 @@
 .onLoad <- function(libname, pkgname) {
   # log level
-  logger::log_threshold(Sys.getenv("JAPANR2024_LOG_LEVEL", "INFO"), pkgname)
+  logger::log_threshold(Sys.getenv("JAPANR2024_LOG_LEVEL", "OFF"), pkgname)
 
   # log to stdout and/or file
   log_appender <- stringr::str_split(
