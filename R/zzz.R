@@ -1,6 +1,6 @@
 .onLoad <- function(libname, pkgname) {
   ns_logger <- asNamespace("logger")
-  ns <- get("top_env_name", ns_logger)
+  ns <- get("top_env_name", ns_logger)()
 
   # log level
   logger::log_threshold(
