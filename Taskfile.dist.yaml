@@ -11,5 +11,7 @@ tasks:
   run:
     cmds: 
       - R --no-save -e 'devtools::load_all(); run()'
+    env:
+      JAPANR2024_LOG_LEVEL: "INFO"
 
 
