@@ -1,8 +1,17 @@
-Depends: R >= 4.3.0
+Type: Package
+Package: japanr2024
+Version: 0.0.0
+Depends: R (>= 4.3.0)
 Imports:
   future,
+  jsonlite,
   logger,
   openmeteo,
   promises,
-  shiny
-
+  shiny,
+  ulid,
+  ggplot2
+Suggests:
+  devtools,
+  languageserver,
+  styler
