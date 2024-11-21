@@ -3,13 +3,7 @@
   ns <- get("top_env_name", ns_logger)()
 
   # log level
-  logger::log_threshold(
-    get(
-      Sys.getenv("JAPANR2024_LOG_LEVEL", "INFO"),
-      envir = ns_logger
-    ),
-    ns
-  )
+  logger::log_threshold(Sys.getenv("JAPANR2024_LOG_LEVEL", "INFO"), ns)
 
   # log to stdout and/or file
   log_appender <- stringr::str_split(
