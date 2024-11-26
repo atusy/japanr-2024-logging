@@ -35,30 +35,11 @@ plot_weather_forecast <- function(x, log = .log, ctx = list()) {
   return(p)
 }
 
-#' @param plan A function to set the future plan
-#' @param log A function to log messages
-server <- function(plan = NULL, log = .log) {
+server <- function(log = .log) {
   force(log)
-  # Async strategy
-  oldplan <- future::plan()
-  apply_plan <- function() {
-    if (!is.null(plan)) {
-      plan()
-    } else if (.Platform$OS.type == "windows") {
-      workers <- min(5L, future::availableCores())
-      future::plan(future::multisession, workers = workers)
-    } else {
-      workers <- min(5L, future::availableCores(constraints = "multicore"))
-      future::plan(future::multicore, workers = workers)
-    }
-  }
 
   # Server function
   function(input, output, session) {
-    # Setup async strategy
-    on.exit(future::plan(oldplan))
-    apply_plan()
-
     # Log session start
     session_id <- ulid::ulid()
     log(logger::INFO, message = "Session started", list(session_id = session_id))
@@ -141,10 +122,25 @@ ui <- function() {
   )
 }
 
+#' @param plan A function to set the future plan
+#' @param log A function to log messages
+#' @param options Options to pass to `shiny::shinyApp`
 run <- function(plan = NULL, log = NULL, options = list()) {
+  oldplan <- future::plan()
+  on.exit(future::plan(oldplan))
+  if (!is.null(plan)) {
+    plan()
+  } else if (.Platform$OS.type == "windows") {
+    workers <- min(5L, future::availableCores())
+    future::plan(future::multisession, workers = workers)
+  } else {
+    workers <- min(5L, future::availableCores(constraints = "multicore"))
+    future::plan(future::multicore, workers = workers)
+  }
+
   shiny::shinyApp(
     ui(),
-    server(plan = plan, log = .log),
+    server(log = .log),
     options = options
   )
 }
