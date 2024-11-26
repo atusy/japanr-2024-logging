@@ -140,7 +140,7 @@ run <- function(plan = NULL, log = NULL, options = list()) {
 
   shiny::shinyApp(
     ui(),
-    server(log = .log),
+    server(log = log),
     options = options
   )
 }
