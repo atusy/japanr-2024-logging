@@ -35,23 +35,21 @@ plot_weather_forecast <- function(x, log = .log, ctx = list()) {
   return(p)
 }
 
+#' @param plan A function to set the future plan
+#' @param log A function to log messages
 server <- function(plan = NULL, log = .log) {
   force(log)
   # Async strategy
   oldplan <- future::plan()
   apply_plan <- function() {
     if (!is.null(plan)) {
-      future::plan(plan)
+      plan()
     } else if (.Platform$OS.type == "windows") {
-      future::plan(
-        future::multisession,
-        workers = min(5L, future::availableCores())
-      )
+      workers <- min(5L, future::availableCores())
+      future::plan(future::multisession, workers = workers)
     } else {
-      future::plan(
-        future::multicore,
-        workers = min(5L, future::availableCores(constraints = "multicore"))
-      )
+      workers <- min(5L, future::availableCores(constraints = "multicore"))
+      future::plan(future::multicore, workers = workers)
     }
   }
 
