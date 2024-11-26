@@ -143,10 +143,10 @@ ui <- function() {
   )
 }
 
-run <- function(plan = NULL, log = NULL) {
+run <- function(plan = NULL, log = NULL, options = list()) {
   shiny::shinyApp(
     ui(),
     server(plan = plan, log = .log),
-    option = list(port = 5604)
+    options = options
   )
 }
