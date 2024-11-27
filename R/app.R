@@ -7,7 +7,8 @@ plot_weather_forecast <- function(x, log = .log, ctx = list()) {
   .data <- rlang::.data
 
   geocode <- openmeteo::geocode(x)
-  log(logger::DEBUG,
+  log(
+    logger::DEBUG,
     "Resolved geocode",
     c(ctx, list(geocode = geocode))
   )
@@ -42,7 +43,7 @@ server <- function(log = .log) {
   function(input, output, session) {
     # Log session start
     session_id <- ulid::ulid()
-    log(logger::INFO, "Session started", list(session_id = session_id))
+    log(logger::INFO, "Started session", list(session_id = session_id))
 
     # Configure logger
     trace_id <- shiny::reactiveVal(NA_character_) # NA behaves as null in JSON
@@ -54,8 +55,10 @@ server <- function(log = .log) {
     shiny::observe({
       params <- shiny::reactiveValuesToList(input)
       trace_id(ulid::ulid())
-      log(logger::DEBUG,
-        "Request received",
+      log(logger::INFO, "Received request", ctx())
+      log(
+        logger::DEBUG,
+        "Received request parameters",
         c(list(request_params = params), ctx())
       )
     })
@@ -84,7 +87,7 @@ server <- function(log = .log) {
 
     # Draw weather forecast plots
     shiny::observe({
-      lapply(locations(), function(location) {
+      promises <- lapply(locations(), function(location) {
         # task-specific logging context
         ctx_span <- c(
           list(location = location, span_id = ulid::ulid()),
@@ -111,6 +114,11 @@ server <- function(log = .log) {
 
         # Do not log "Processed location" here as it is async
       })
+
+      purrr::exec(promises::promise_all, !!!promises) |>
+        promises::then(function(...) {
+          log(logger::INFO, "Processed request", ctx())
+        })
     })
   }
 }
