@@ -10,7 +10,7 @@ plot_weather_forecast <- function(x, log = .log, ctx = list()) {
   log(
     logger::DEBUG,
     "Resolved geocode",
-    c(ctx, list(geocode = geocode))
+    c(ctx, list(value = as.list(geocode)))
   )
 
   forecast <- openmeteo::weather_forecast(
