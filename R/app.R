@@ -125,7 +125,7 @@ ui <- function() {
 #' @param plan A function to set the future plan
 #' @param log A function to log messages
 #' @param options Options to pass to `shiny::shinyApp`
-run <- function(plan = NULL, log = NULL, options = list()) {
+run <- function(plan = NULL, log = .log, options = list()) {
   oldplan <- future::plan()
   on.exit(future::plan(oldplan))
   if (!is.null(plan)) {
