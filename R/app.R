@@ -60,8 +60,11 @@ server <- function(log = .log) {
       list(session_id = session_id, trace_id = trace_id())
     })
 
-    # Record request ID and optionally log request parameters
+    locations <- shiny::reactiveVal(character(0))
+
+    # Receive request
     shiny::observe({
+      # set trace_id
       params <- shiny::reactiveValuesToList(input)
       trace_id(ulid::ulid())
       log(logger::INFO, "Received request", ctx())
@@ -70,20 +73,18 @@ server <- function(log = .log) {
         "Received request parameters",
         c(list(value = params), ctx())
       )
-    })
 
-    # Parse locations as comma-separated values
-    locations <- shiny::reactive({
-      shiny::req(input$locations)
-      ret <- input$locations |>
-        stringi::stri_split_regex("\\s*,\\s*") |>
-        unlist()
+      # parse locations
+      locations(
+        input$locations |>
+          stringi::stri_split_regex("\\s*,\\s*") |>
+          unlist()
+      )
       log(
         logger::DEBUG,
         "Locations parsed",
-        c(list(value = ret), ctx())
+        c(list(value = locations()), ctx())
       )
-      ret
     })
 
     # Prepare desired number of weather forecast plots
