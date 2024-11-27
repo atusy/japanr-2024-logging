@@ -59,7 +59,7 @@ server <- function(log = .log) {
       log(
         logger::DEBUG,
         "Received request parameters",
-        c(list(request_params = params), ctx())
+        c(list(value = params), ctx())
       )
     })
 
@@ -89,12 +89,13 @@ server <- function(log = .log) {
     shiny::observe({
       promises <- lapply(locations(), function(location) {
         # task-specific logging context
-        ctx_span <- c(
-          list(location = location, span_id = ulid::ulid()),
-          ctx()
-        )
+        ctx_span <- c(list(span_id = ulid::ulid()), ctx())
 
-        log(logger::DEBUG, "Processing location", ctx_span)
+        log(
+          logger::DEBUG,
+          "Processing location",
+          c(list(value = location), ctx_span)
+        )
 
         plot_id <- paste0("weather_", location)
         future::future({
@@ -108,7 +109,7 @@ server <- function(log = .log) {
             log(
               logger::ERROR,
               "Failed to process location",
-              c(list(error = as.list(format(e))), ctx_span)
+              c(list(value = as.list(format(e))), ctx_span)
             )
           })
 
