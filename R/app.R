@@ -42,7 +42,7 @@ server <- function(log = .log) {
   function(input, output, session) {
     # Log session start
     session_id <- ulid::ulid()
-    log(logger::INFO, message = "Session started", list(session_id = session_id))
+    log(logger::INFO, "Session started", list(session_id = session_id))
 
     # Configure logger
     trace_id <- shiny::reactiveVal(NA_character_) # NA behaves as null in JSON
