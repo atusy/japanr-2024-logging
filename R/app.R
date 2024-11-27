@@ -1,4 +1,13 @@
 .log <- function(level, message, ctx = list()) {
+  # Expected fields:
+  #   - time
+  #   - level
+  #   - ns
+  #   - message
+  #   - session_id: unique per access
+  #   - trace_id: unique per request
+  #   - span_id: unique per task
+  #   - value: miscellaneous values including errors
   purrr::exec(logger::log_level, level, message = message, !!!ctx)
 }
 
