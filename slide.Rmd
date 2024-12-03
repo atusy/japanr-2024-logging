@@ -93,12 +93,12 @@ Avoid reinvention with `print`, unless intentionally.
 ## Threshold by severity
 
 - For production
-    - FATAL: when an error stops the program
-    - ERROR: when an error is caught and program continued running
-    - WARNING: when an unexpected behavior occurs without error
-    - INFO: various info for debugging/monitoring purpose
+    - **FATAL:** when an error stops the program
+    - **ERROR:** when an error is caught and program continued running
+    - **WARNING:** when an unexpected behavior occurs without error
+    - **INFO:** various info for debugging/monitoring purpose
 - Additionally for development
-    - DEBUG: further detailed info for debugging purpose
+    - **DEBUG:** further detailed info for debugging purpose
     
 ---
 

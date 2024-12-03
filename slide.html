@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </li>
 </ul>
 <hr />
-<h1 id="chp:">著書</h1>
+<h1 id="chp:publication">Publication</h1>
 <p><img src="http://image.gihyo.co.jp/assets/images/cover/2022/9784297125240.jpg" alt="" style="height:6in" /></p>
 <hr />
 <h1 id="chp:why-logging">Why logging?</h1>
@@ -92,15 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
 <ul>
 <li>For production
 <ul>
-<li>FATAL: when an error stops the program</li>
-<li>ERROR: when an error is caught and program continued running</li>
-<li>WARNING: when an unexpected behavior occurs without error</li>
-<li>INFO: various info for debugging/monitoring purpose</li>
+<li><strong>FATAL:</strong> when an error stops the program</li>
+<li><strong>ERROR:</strong> when an error is caught and program continued running</li>
+<li><strong>WARNING:</strong> when an unexpected behavior occurs without error</li>
+<li><strong>INFO:</strong> various info for debugging/monitoring purpose</li>
 </ul>
 </li>
 <li>Additionally for development
 <ul>
-<li>DEBUG: further detailed info for debugging purpose</li>
+<li><strong>DEBUG:</strong> further detailed info for debugging purpose</li>
 </ul>
 </li>
 </ul>
@@ -118,16 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
 <h2 id="sec:what-is-the-preferred-format">What is the preferred format?</h2>
 <p>Machine readable one, typically <strong>JSON Lines</strong>. <br />
 Then, packages help you parsing the data (e.g., <strong>jsonlite</strong>, <strong>yyjsonr</strong>, …).</p>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Program started.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:56:47&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Program started.&quot;}
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;WARN&quot;,&quot;message&quot;:&quot;Some warning.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:56:47&quot;,&quot;level&quot;:&quot;WARN&quot;,&quot;message&quot;:&quot;Some warning.&quot;}
 </code></pre>
 <hr />
 <h2 id="sec:what-about-human-readable-format">What about human-readable format?</h2>
 <p>The log requires self-maintained parsers…</p>
-<pre><code>2024-12-03 23:28:56 INFO::Program started.
+<pre><code>2024-12-03 23:56:47 INFO::Program started.
 </code></pre>
-<pre><code>2024-12-03 23:28:56 WARN::Some warning.
+<pre><code>2024-12-03 23:56:47 WARN::Some warning.
 </code></pre>
 <hr />
 <h2 id="sec:can-we-use-both">Can we use both?</h2>
@@ -149,7 +149,7 @@ logger::log_layout(logger::layout_json_parser(c(&quot;time&quot;, &quot;level&qu
 <pre><code class="language-r"># Log
 logger::log_info(message = &quot;Program started.&quot;)
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:56:47&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
 </code></pre>
 <hr />
 <h2 id="sec:in-package">In Package</h2>
@@ -238,7 +238,7 @@ logger::log_info(
   value = x
 )
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:56:47&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
 </code></pre>
 <hr />
 <h3 id="sec:what-are-the-various-identifiers">What are the various identifiers?</h3>
