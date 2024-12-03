@@ -6,7 +6,7 @@ tasks:
       - R --no-save -e 'devtools::load_all(); run(options = list(port = 5604))'
     env:
       # to the stdout and file
-      JAPANR2024_LOG_APPENDER: "-;inst/data/japanr2024.jsonl"
+      JAPANR2024_LOG_APPENDER: "-;inst/extdata/japanr2024.jsonl"
       JAPANR2024_LOG_LEVEL: "DEBUG"
   run:
     cmds: 
