@@ -1,0 +1,346 @@
+---
+title: "Happy Structured Logging in R"
+author: atusy
+output:
+  litedown::html_format:
+    meta:
+      css: ["@default", "@snap"]
+      js: ["@snap"]
+    options:
+      embed_resources: true
+---
+
+```{r setup, include=FALSE}
+devtools::load_all()
+opts <- litedown::reactor()
+opts$collapse <- TRUE
+opts$cache <- TRUE
+logger::log_appender(logger::appender_stdout)
+```
+
+# Why logging?
+
+To record or help identifying (potential) issues and enhance improvements.
+
+- **unexpected behaviors**, typically errors
+- **performance issues**
+- security issues
+- auditing and compliance
+
+The **[logger]** package helps you.
+
+[logger]: https://daroczig.github.io/logger/index.html
+
+---
+
+# Why logging library?
+
+Because `print` is not enough to
+
+- generate analyzable logs
+- threshold by severity
+- control output destinations
+- distinguish program output from logging
+    - typically on CLI tools
+    - less important in R
+
+Avoid reinvention with `print`, unless intentionally.
+
+---
+
+## Generate analyzable logs
+
+- has timestamp
+- has machine readable format
+    - i.e. structured logging
+- has traceable context
+    - especially for asynchronous or distributed systems
+
+---
+
+## Threshold by severity
+
+- For production
+    - FATAL: when an error stops the program
+    - ERROR: when an error is caught and program continued running
+    - WARNING: when an unexpected behavior occurs without error
+    - INFO: various info for debugging/monitoring purpose
+- Additionally for development
+    - DEBUG: further detailed info for debugging purpose
+    
+---
+
+## Control output destinations
+
+- stdout
+- file
+- DB
+- SaaS (e.g., Datadog, New Relic, ...)
+
+---
+
+# Log format
+
+---
+
+## What is the preferred format?
+
+Machine readable one, typically **JSON Lines**. \
+Then, packages help you parsing the data (e.g., **jsonlite**, **yyjsonr**, ...).
+
+```{r structured-log, echo=FALSE, comment=""}
+logger::log_formatter(logger::formatter_json)
+logger::log_layout(logger::layout_json_parser(c("time", "level")))
+logger::log_info(message = "Program started.")
+logger::log_warn(message = "Some warning.")
+```
+
+---
+
+## What about human-readable format?
+
+The log requires self-maintained parsers...
+
+```{r traditional-log, echo=FALSE, comment=""}
+logger::log_formatter(logger::formatter_logging)
+logger::log_layout(logger::layout_logging)
+logger::log_info("Program started.")
+logger::log_warn("Some warning.")
+```
+
+---
+
+## Can we use both?
+
+YES!
+
+- human readable logs to console
+- machine readable logs to file
+
+---
+
+# How to log?
+
+---
+
+## Basic
+
+Use **logger** package
+
+```{r, cache = FALSE}
+# Configure
+logger::log_appender(logger::appender_stdout)
+logger::log_formatter(logger::formatter_json)
+logger::log_layout(logger::layout_json_parser(c("time", "level", "ns")))
+```
+
+```{r, comment=""}
+# Log
+logger::log_info(message = "Program started.")
+```
+
+---
+
+## In Package
+
+- Key points:
+  - Configure **logger** with `.onLoad()`
+  - Use environment variables to control the behavior
+  - Use unique namespace and avoid affect other **logger**s
+
+- Reference materials:
+  - [Rのパッケージ内でloggerパッケージを使う](https://blog.atusy.net/2024/11/19/logger-in-r-package/)
+  - 例: <https://github.com/atusy/japanr-2024-logging/blob/main/R/zzz.R>
+
+---
+
+## Log Schema?
+
+Should be easy to analyze
+
+| key | type | desc |
+| --- | --- | --- |
+| time | string | when the log is generated |
+| level | string | severity |
+| ns | string | namespace |
+| message | string | static message |
+| session_id | string | unique per access |
+| trace_id | string | unique per request |
+| span_id | string | unique per task |
+| value | any | a value related to the message |
+| context | named list | additional context |
+
+---
+
+### Why static message?
+
+easy to analyze (e.g., `dplyr::filter()` and `dplyr::group_by()`)
+
+```{r, comment=""}
+x <- 1
+logger::log_info(
+  message = "x is defined", # not glue::glue("x is {x}")
+  value = x
+)
+````
+
+---
+
+### What are the various identifiers?
+
+- **session_id**
+    - R sessions that loads the package
+    - browser sessions in Shiny app
+- **trace_id**
+    - function calls
+    - user-interactions in Shiny app
+- **span_id**: unique per task
+    - various tasks with the same trace_id
+
+These keywords typically appears in observability engineering.
+
+---
+
+### What is the context?
+
+Some additional information that is not suitable for `value`.
+
+---
+
+### What is the value?
+
+value related to the message
+
+```{r, comment=""}
+f <- function(x) {
+  logger::log_info(message = "f(x) is called", value = x)
+}
+```
+
+---
+
+# Examples of log analysis
+
+```{r}
+logdata <- system.file("data/japanr2024.jsonl", package = "japanr2024") |>
+  yyjsonr::read_ndjson_file() |>
+  dplyr::mutate(time = clock::date_time_parse(time, "Asia/Tokyo"))
+```
+
+---
+
+## Error count
+
+Oh no! Many requests suffer errors!
+
+```{r}
+logdata |>
+  dplyr::summarize(
+    time = min(time),
+    errors = sum(level == "ERROR"),
+    .by = "trace_id"
+  ) |>
+  ggplot2::ggplot() +
+  ggplot2::aes(time, errors) +
+  ggplot2::geom_point() +
+  ggplot2::scale_x_datetime(name = "", date_breaks = "10 sec")
+```
+
+---
+
+## Request response time
+
+Hmm... users have to wait for several seconds...
+
+```{r}
+logdata |>
+  dplyr::mutate(start = min(time), .by = "trace_id") |>
+  dplyr::reframe(
+    start = min(start),
+    start_span = time[message == "Received request"],
+    end_span = time[message == "Processed request"],
+    duration = end_span - start_span,
+    locations = lengths(value[message == "Locations parsed"]),
+    .by = "trace_id"
+  ) |>
+  ggplot2::ggplot() +
+  ggplot2::aes(start, duration, color = locations) +
+  ggplot2::geom_point() +
+  ggplot2::scale_x_datetime(name = "", date_breaks = "10 sec") +
+  ggplot2::scale_y_continuous() +
+  NULL
+```
+
+
+
+---
+
+## Details of internal process
+
+To examine the cause of errors and slow responses.
+
+- Fast user inputs may cause too many requests
+- Invalid/unsupported locations cause errors
+
+```{r}
+logdata |>
+  dplyr::filter(!is.na(span_id)) |>
+  dplyr::mutate(x = lubridate::round_date(time, "5 minutes")) |>
+  dplyr::mutate(n = dplyr::n(), .by = x) |>
+  dplyr::filter(n == max(n)) |>
+  dplyr::summarize(
+    start = min(time),
+    end = max(time),
+    location = unlist(value[message == "Processing location"]),
+    severity = max(c(ERROR = 3, WARNING = 2, INFO = 1, DEBUG = 0)[level]),
+    .by = c("trace_id", "span_id")
+  ) |>
+  ggplot2::ggplot() +
+  ggplot2::aes(
+    x = start,
+    xend = end,
+    y = location,
+    yend = location,
+    color = severity,
+  ) +
+  ggplot2::geom_segment() +
+  ggplot2::scale_color_binned() +
+  ggplot2::facet_grid(rows = "trace_id", scales = "free_y") +
+  ggplot2::theme(strip.text.y = ggplot2::element_blank()) +
+  ggplot2::scale_x_datetime(name = "", date_breaks = "10 sec")
+```
+
+---
+
+# Ideas to solve the issues
+
+---
+
+## Slow down a reactive expression with debounce/throttle
+
+<https://shiny.posit.co/r/reference/shiny/1.9.0/debounce.html>
+
+---
+
+## Memoising slow functions
+
+```{r}
+# Memoised versions of openmeteo functions
+geocode <- memoise::memoise(openmeteo::geocode)
+weather_forecast <- memoise::memoise(
+  openmeteo::weather_forecast,
+  # Invalidate cache daily
+  hash = function(x) rlang::hash(list(x, Sys.Date()))
+)
+
+# Efficient forecast function
+forecast <- function(x) {
+  g <- geocode(x)
+  weather_forecast(c(g$latitude, g$longitude), hourly = "temperature_2m")
+}
+```
+
+---
+
+# ENJOY HAPPY STRUCTURED LOGGING!
+
