@@ -14,8 +14,21 @@ output:
 devtools::load_all()
 opts <- litedown::reactor()
 opts$collapse <- TRUE
-opts$cache <- TRUE
+opts$dev.args <- list(units = "in", width = 7, height = 2.8, res = 180)
 logger::log_appender(logger::appender_stdout)
+```
+
+```{js, echo=FALSE}
+document.addEventListener('DOMContentLoaded', () => {
+  const foldCode = Array.from(document.querySelectorAll('code.fold'))
+  foldCode.forEach((code) => {
+    const parent  = code.parentElement
+    const title = (code.title && code.title !== "") ? code.title : "Code"
+    if (parent.tagName === "PRE") {
+      parent.outerHTML = `<details><summary><small>${title}</small></summary>${parent.outerHTML}</details>`
+    }
+  })
+})
 ```
 
 # Why logging?
@@ -221,10 +234,11 @@ f <- function(x) {
 
 # Examples of log analysis
 
-```{r}
-logdata <- system.file("data/japanr2024.jsonl", package = "japanr2024") |>
+```{r, attr.output=".txt .fold title='Output'"}
+logdata <- system.file("extdata/japanr2024.jsonl", package = "japanr2024") |>
   yyjsonr::read_ndjson_file() |>
-  dplyr::mutate(time = clock::date_time_parse(time, "Asia/Tokyo"))
+  dplyr::mutate(time = clock::date_time_parse(time, "Asia/Tokyo")) |>
+  dplyr::glimpse()
 ```
 
 ---
@@ -233,7 +247,7 @@ logdata <- system.file("data/japanr2024.jsonl", package = "japanr2024") |>
 
 Oh no! Many requests suffer errors!
 
-```{r}
+```{r, attr.source=".r .fold", cache=FALSE}
 logdata |>
   dplyr::summarize(
     time = min(time),
@@ -252,7 +266,7 @@ logdata |>
 
 Hmm... users have to wait for several seconds...
 
-```{r}
+```{r, attr.source=".r .fold", cache=FALSE}
 logdata |>
   dplyr::mutate(start = min(time), .by = "trace_id") |>
   dplyr::reframe(
@@ -275,40 +289,44 @@ logdata |>
 
 ---
 
-## Details of internal process
+## Deep dive into errors and slow responses.
 
-To examine the cause of errors and slow responses.
-
-- Fast user inputs may cause too many requests
-- Invalid/unsupported locations cause errors
-
-```{r}
+```{r, attr.source=".r .fold", cache=FALSE, dev.args=list(units = "in", width = 7, height = 3.3, res = 180)}
 logdata |>
   dplyr::filter(!is.na(span_id)) |>
-  dplyr::mutate(x = lubridate::round_date(time, "5 minutes")) |>
-  dplyr::mutate(n = dplyr::n(), .by = x) |>
-  dplyr::filter(n == max(n)) |>
   dplyr::summarize(
     start = min(time),
     end = max(time),
     location = unlist(value[message == "Processing location"]),
-    severity = max(c(ERROR = 3, WARNING = 2, INFO = 1, DEBUG = 0)[level]),
+    error = "ERROR" %in% level,
     .by = c("trace_id", "span_id")
+  ) |>
+  dplyr::mutate(
+    location = forcats::fct_relevel(location, rev(unique(location)))
   ) |>
   ggplot2::ggplot() +
   ggplot2::aes(
-    x = start,
-    xend = end,
-    y = location,
-    yend = location,
-    color = severity,
+    x = start, xend = end,
+    y = location, yend = location,
+    color = error,
   ) +
   ggplot2::geom_segment() +
-  ggplot2::scale_color_binned() +
   ggplot2::facet_grid(rows = "trace_id", scales = "free_y") +
-  ggplot2::theme(strip.text.y = ggplot2::element_blank()) +
+  ggplot2::theme(
+    strip.text.y = ggplot2::element_blank(),
+    axis.title.x = ggplot2::element_blank()
+  ) +
   ggplot2::scale_x_datetime(name = "", date_breaks = "10 sec")
 ```
+
+---
+
+## Insights from the analysis
+
+- Fast user inputs cause too many requests
+    - Same locations are processed multiple times
+- Invalid/unsupported locations cause errors
+    - they are ignorable
 
 ---
 
@@ -340,7 +358,11 @@ forecast <- function(x) {
 }
 ```
 
+## 
+
 ---
 
 # ENJOY HAPPY STRUCTURED LOGGING!
 
+- Record logs to identify (potential) issues!
+- Use structured logs and analyze them with lovely tidyverse!
