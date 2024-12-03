@@ -4,14 +4,18 @@ Version: 0.0.0
 Depends: R (>= 4.3.0)
 Imports:
   future,
-  jsonlite,
+  ggplot2,
   logger,
   openmeteo,
   promises,
   shiny,
-  ulid,
-  ggplot2
+  ulid
 Suggests:
+  clock,
   devtools,
+  forcats,
   languageserver,
-  styler
+  litedown,
+  rprojroot,
+  styler,
+  yyjsonr
