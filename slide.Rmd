@@ -32,6 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
+# Atusy
+
+- Application Engineer at [3-shake Inc.](https://3-shake.com/)
+- Maitainer of R packages
+  - felp, ftExtra, knitr, rmarkdown, ...
+- Appears on
+  - Blog: <https://blog.atusy.net/>
+  - GitHub: [@atusy](https://github.com/atusy)
+  - X: [@Atsushi776](https://x.com/Atsushi776)
+
+---
+
+# Publication
+
+![](http://image.gihyo.co.jp/assets/images/cover/2022/9784297125240.jpg){style="height:6in"}
+
+---
+
 # Why logging?
 
 To record or help identifying (potential) issues and enhance improvements.

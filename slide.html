@@ -17,16 +17,37 @@
 <div class="body">
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const foldCode = Array.from(document.querySelectorAll('code.fold'))
+  // folding
+  const foldCode = Array.from(document.querySelectorAll('code.fold'));
   foldCode.forEach((code) => {
-    const parent  = code.parentElement
-    const title = (code.title && code.title !== "") ? code.title : "Code"
+    const parent  = code.parentElement;
+    const title = (code.title && code.title !== "") ? code.title : "Code";
     if (parent.tagName === "PRE") {
-      parent.outerHTML = `<details><summary><small>${title}</small></summary>${parent.outerHTML}</details>`
+      parent.outerHTML = `<details><summary><small>${title}</small></summary>${parent.outerHTML}</details>`;
     }
-  })
-})
+  });
+});
 </script>
+<h1 id="chp:atusy">Atusy</h1>
+<ul>
+<li>Application Engineer at <a href="https://3-shake.com/">3-shake Inc.</a></li>
+<li>Maitainer of R packages
+<ul>
+<li>felp, ftExtra, knitr, rmarkdown, …</li>
+</ul>
+</li>
+<li>Appears on
+<ul>
+<li>Blog: <a href="https://blog.atusy.net/">https://blog.atusy.net/</a></li>
+<li>GitHub: <a href="https://github.com/atusy">@atusy</a></li>
+<li>X: <a href="https://x.com/Atsushi776">@Atsushi776</a></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h1 id="chp:">著書</h1>
+<p><img src="http://image.gihyo.co.jp/assets/images/cover/2022/9784297125240.jpg" alt="" style="height:6in" /></p>
+<hr />
 <h1 id="chp:why-logging">Why logging?</h1>
 <p>To record or help identifying (potential) issues and enhance improvements.</p>
 <ul>
@@ -97,16 +118,16 @@ document.addEventListener('DOMContentLoaded', () => {
 <h2 id="sec:what-is-the-preferred-format">What is the preferred format?</h2>
 <p>Machine readable one, typically <strong>JSON Lines</strong>. <br />
 Then, packages help you parsing the data (e.g., <strong>jsonlite</strong>, <strong>yyjsonr</strong>, …).</p>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 22:50:14&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Program started.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Program started.&quot;}
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 22:50:14&quot;,&quot;level&quot;:&quot;WARN&quot;,&quot;message&quot;:&quot;Some warning.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;WARN&quot;,&quot;message&quot;:&quot;Some warning.&quot;}
 </code></pre>
 <hr />
 <h2 id="sec:what-about-human-readable-format">What about human-readable format?</h2>
 <p>The log requires self-maintained parsers…</p>
-<pre><code>2024-12-03 22:50:14 INFO::Program started.
+<pre><code>2024-12-03 23:28:56 INFO::Program started.
 </code></pre>
-<pre><code>2024-12-03 22:50:14 WARN::Some warning.
+<pre><code>2024-12-03 23:28:56 WARN::Some warning.
 </code></pre>
 <hr />
 <h2 id="sec:can-we-use-both">Can we use both?</h2>
@@ -128,7 +149,7 @@ logger::log_layout(logger::layout_json_parser(c(&quot;time&quot;, &quot;level&qu
 <pre><code class="language-r"># Log
 logger::log_info(message = &quot;Program started.&quot;)
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 22:50:14&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
 </code></pre>
 <hr />
 <h2 id="sec:in-package">In Package</h2>
@@ -217,7 +238,7 @@ logger::log_info(
   value = x
 )
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-03 22:50:14&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
+<pre><code>{&quot;time&quot;:&quot;2024-12-03 23:28:56&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
 </code></pre>
 <hr />
 <h3 id="sec:what-are-the-various-identifiers">What are the various identifiers?</h3>
@@ -337,7 +358,11 @@ logger::log_info(
 <hr />
 <h2 id="sec:insights-from-the-analysis">Insights from the analysis</h2>
 <ul>
-<li>Fast user inputs cause too many requests</li>
+<li>Fast user inputs cause too many requests
+<ul>
+<li>Same locations are processed multiple times</li>
+</ul>
+</li>
 <li>Invalid/unsupported locations cause errors
 <ul>
 <li>they are ignorable</li>
