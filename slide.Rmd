@@ -20,15 +20,16 @@ logger::log_appender(logger::appender_stdout)
 
 ```{js, echo=FALSE}
 document.addEventListener('DOMContentLoaded', () => {
-  const foldCode = Array.from(document.querySelectorAll('code.fold'))
+  // folding
+  const foldCode = Array.from(document.querySelectorAll('code.fold'));
   foldCode.forEach((code) => {
-    const parent  = code.parentElement
-    const title = (code.title && code.title !== "") ? code.title : "Code"
+    const parent  = code.parentElement;
+    const title = (code.title && code.title !== "") ? code.title : "Code";
     if (parent.tagName === "PRE") {
-      parent.outerHTML = `<details><summary><small>${title}</small></summary>${parent.outerHTML}</details>`
+      parent.outerHTML = `<details><summary><small>${title}</small></summary>${parent.outerHTML}</details>`;
     }
-  })
-})
+  });
+});
 ```
 
 # Why logging?
