@@ -99,7 +99,16 @@ Avoid reinvention with `print`, unless intentionally.
     - **INFO:** various info for debugging/monitoring purpose
 - Additionally for development
     - **DEBUG:** further detailed info for debugging purpose
-    
+
+```{r, eval=FALSE}
+logger::log_threshold("INFO") # DEBUG logs are ignored
+
+logger::log_info(message = "Program started.")
+
+params <- list(x = 1)
+logger::log_debug(message = "Received parameters", value = params)
+```
+ 
 ---
 
 ## Control output destinations
