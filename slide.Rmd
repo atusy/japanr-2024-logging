@@ -323,7 +323,12 @@ For example, parent-child relationship between logs.
 
 ---
 
-# How to log?
+# Recap of introduction to logging
+
+- Logging helps identifying (potential) issues and enhances improvements
+- Logs should be analyzable
+  - Use structured logs with JSON Lines format
+  - Design schema that increments observability
 
 ---
 
