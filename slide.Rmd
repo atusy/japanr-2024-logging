@@ -84,7 +84,7 @@ Avoid reinvention with `print`, unless intentionally.
 
 - has traceable context
     - timestamp
-    - severity
+    - log level
     - message
     - ...
 - has machine readable format (e.g., JSON Lines)
@@ -127,7 +127,7 @@ list(time = "2024-12-03 22:38:17", level = "DEBUG", ns = "japanr2024", message =
 
 ---
 
-## Threshold by severity
+## Threshold by log level
 
 - For production
     - **FATAL:** when an error stops the program
