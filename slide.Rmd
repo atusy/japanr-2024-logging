@@ -90,10 +90,10 @@ Avoid reinvention with `print`, unless intentionally.
 - has machine readable format (e.g., JSON Lines)
 
 <style>
-.jsonl pre { white-space: pre; }
+.nowrap pre { white-space: pre; }
 </style>
 
-<div class="jsonl">
+<div class="nowrap">
 
 ``` json
 {"time":"2024-12-03 22:38:17","level":"INFO","ns":"japanr2024","message":"Started session","session_id":"01JE6BWEWP0BAAFGPZTZ9GBNM6"}
@@ -108,25 +108,22 @@ Avoid reinvention with `print`, unless intentionally.
 
 ---
 
-## R-representation of a log record
+## R-equivalent of JSON Lines
 
-```r
-list(
-  # basic info
-  time = "2024-12-03 22:38:17",
-  level = "DEBUG",
-  ns = "japanr2024",
+Named list of lines.
 
-  # static message and a related value
-  message = "Processing location",
-  value = "tokyo",
+<div class="nowrap">
 
-  # various identifiers that describe the relationship between logs
-  span_id = "01JE6BWEXSW65DD1EC858XMZQ3",
-  session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6",
-  trace_id = "01JE6BWEXF5F6HDD4YFZBP157F"
-)
+``` r
+list(time = "2024-12-03 22:38:17", level = "INFO", ns = "japanr2024", message = "Started session", session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6")
+list(time = "2024-12-03 22:38:17", level = "INFO", ns = "japanr2024", message = "Received request", session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6", trace_id = "01JE6BWEXF5F6HDD4YFZBP157F")
+list(time = "2024-12-03 22:38:17", level = "DEBUG", ns = "japanr2024", message = "Received request parameters", value = {locations = "tokyo, london"}, session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6", trace_id = "01JE6BWEXF5F6HDD4YFZBP157F")
+list(time = "2024-12-03 22:38:17", level = "DEBUG", ns = "japanr2024", message = "Locations parsed", value = ["tokyo", "london"], session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6", trace_id = "01JE6BWEXF5F6HDD4YFZBP157F")
+list(time = "2024-12-03 22:38:17", level = "DEBUG", ns = "japanr2024", message = "Processing location", value = "tokyo", span_id = "01JE6BWEXSW65DD1EC858XMZQ3", session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6", trace_id = "01JE6BWEXF5F6HDD4YFZBP157F")
+list(time = "2024-12-03 22:38:17", level = "DEBUG", ns = "japanr2024", message = "Plotting weather forecast", span_id = "01JE6BWEXSW65DD1EC858XMZQ3", session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6", trace_id = "01JE6BWEXF5F6HDD4YFZBP157F")
 ```
+
+</div>
 
 ---
 
