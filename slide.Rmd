@@ -149,6 +149,18 @@ YES!
 - human readable logs to console
 - machine readable logs to file
 
+```{r, eval=FALSE}
+# Configure
+t <- tempfile() # or desired file path
+logger::log_appender(logger::appender_stdout, index = 1)
+logger::log_appender(logger::appender_file(t), index = 2)
+logger::log_formatter(logger::formatter_json, index = 2)
+logger::log_layout(logger::layout_json_parser(c("time", "level", "ns")), index = 2)
+
+# Emit log
+logger::log_info("foo")
+```
+
 ---
 
 # How to log?
