@@ -332,9 +332,7 @@ For example, parent-child relationship between logs.
 
 ---
 
-## Basic
-
-Use **logger** package
+# How to log with **logger**?
 
 ```{r, cache = FALSE}
 # Configure
