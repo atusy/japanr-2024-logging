@@ -345,7 +345,7 @@ logdata |>
 - Fast user inputs cause too many requests
     - Same locations are processed multiple times
 - Invalid/unsupported locations cause errors
-    - they are ignorable
+    - They are ignorable
 
 ---
 
