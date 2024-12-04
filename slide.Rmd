@@ -377,7 +377,22 @@ forecast <- function(x) {
 }
 ```
 
-## 
+## Try-catch
+
+```{r}
+geocode <- function(x) {
+  tryCatch(
+    openmeteo::geocode(x),
+    error = function(e) {
+      if (e$message == "No matches found") {
+        logger::log_debug("No matches found for geocode", value = x)
+        return(NULL)
+      }
+      stop(e)
+    }
+  )
+}
+```
 
 ---
 
