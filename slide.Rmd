@@ -82,11 +82,51 @@ Avoid reinvention with `print`, unless intentionally.
 
 ## Generate analyzable logs
 
-- has timestamp
-- has machine readable format
-    - i.e. structured logging
+- has machine readable format (e.g., JSON Lines)
 - has traceable context
-    - especially for asynchronous or distributed systems
+    - timestamp
+    - severity
+    - message
+    - ...
+
+<style>
+.jsonl pre { white-space: pre; }
+</style>
+
+<div class="jsonl">
+
+``` json
+{"time":"2024-12-03 22:38:17","level":"INFO","ns":"japanr2024","message":"Started session","session_id":"01JE6BWEWP0BAAFGPZTZ9GBNM6"}
+{"time":"2024-12-03 22:38:17","level":"INFO","ns":"japanr2024","message":"Received request","session_id":"01JE6BWEWP0BAAFGPZTZ9GBNM6","trace_id":"01JE6BWEXF5F6HDD4YFZBP157F"}
+{"time":"2024-12-03 22:38:17","level":"DEBUG","ns":"japanr2024","message":"Received request parameters","value":{"locations":"tokyo, london"},"session_id":"01JE6BWEWP0BAAFGPZTZ9GBNM6","trace_id":"01JE6BWEXF5F6HDD4YFZBP157F"}
+{"time":"2024-12-03 22:38:17","level":"DEBUG","ns":"japanr2024","message":"Locations parsed","value":["tokyo","london"],"session_id":"01JE6BWEWP0BAAFGPZTZ9GBNM6","trace_id":"01JE6BWEXF5F6HDD4YFZBP157F"}
+{"time":"2024-12-03 22:38:17","level":"DEBUG","ns":"japanr2024","message":"Processing location","value":"tokyo","span_id":"01JE6BWEXSW65DD1EC858XMZQ3","session_id":"01JE6BWEWP0BAAFGPZTZ9GBNM6","trace_id":"01JE6BWEXF5F6HDD4YFZBP157F"}
+{"time":"2024-12-03 22:38:17","level":"DEBUG","ns":"japanr2024","message":"Plotting weather forecast","span_id":"01JE6BWEXSW65DD1EC858XMZQ3","session_id":"01JE6BWEWP0BAAFGPZTZ9GBNM6","trace_id":"01JE6BWEXF5F6HDD4YFZBP157F"}
+```
+
+</div>
+
+---
+
+## R-representation of a log record
+
+```r
+list(
+  # basic info
+  time = "2024-12-03 22:38:17",
+  level = "DEBUG",
+  ns = "japanr2024",
+
+  # static message and a related value
+  message = "Processing location",
+  value = "tokyo",
+
+  # various identifiers that describe the relationship between logs
+  span_id = "01JE6BWEXSW65DD1EC858XMZQ3",
+  session_id = "01JE6BWEWP0BAAFGPZTZ9GBNM6",
+  trace_id = "01JE6BWEXF5F6HDD4YFZBP157F"
+)
+```
 
 ---
 
