@@ -157,20 +157,27 @@ logger::log_debug(message = "Received parameters", value = params)
 
 ---
 
-# Log format
+# Log format for analyzability
 
 ---
 
 ## What is the preferred format?
 
-Machine readable one, typically **JSON Lines**. \
-Then, packages help you parsing the data (e.g., **jsonlite**, **yyjsonr**, ...).
+Typically **JSON Lines**.
 
-```{r structured-log, echo=FALSE, comment=""}
-logger::log_formatter(logger::formatter_json)
-logger::log_layout(logger::layout_json_parser(c("time", "level")))
-logger::log_info(message = "Program started.")
-logger::log_warn(message = "Some warning.")
+```json
+{"time":"2024-12-04 21:07:28","level":"INFO","message":"Program started."}
+{"time":"2024-12-04 21:07:28","level":"WARN","message":"Some warning."}
+```
+
+Then, packages parse them and outputs data frame (e.g., **jsonlite**, **yyjsonr**, ...).
+
+```{r, echo=FALSE}
+yyjsonr::read_ndjson_str(paste(
+  '{"time":"2024-12-04 21:07:28","level":"INFO","message":"Program started."}',
+  '{"time":"2024-12-04 21:07:28","level":"WARN","message":"Some warning."}',
+  sep = "\n"
+))
 ```
 
 ---
@@ -179,11 +186,9 @@ logger::log_warn(message = "Some warning.")
 
 The log requires self-maintained parsers...
 
-```{r traditional-log, echo=FALSE, comment=""}
-logger::log_formatter(logger::formatter_logging)
-logger::log_layout(logger::layout_logging)
-logger::log_info("Program started.")
-logger::log_warn("Some warning.")
+```
+2024-12-04 21:07:28 [INFO] Program started
+2024-12-04 21:07:28 [WARN] Some warning.
 ```
 
 ---
@@ -195,13 +200,7 @@ YES!
 - human readable logs to console
 - machine readable logs to file
 
-```{r, eval=FALSE}
-# Configure
-t <- tempfile() # or desired file path
-logger::log_appender(logger::appender_stdout, index = 1)
-logger::log_appender(logger::appender_file(t), index = 2)
-logger::log_formatter(logger::formatter_json, index = 2)
-logger::log_layout(logger::layout_json_parser(c("time", "level", "ns")), index = 2)
+But you need advanced configurations.
 
 # Emit log
 logger::log_info("foo")
