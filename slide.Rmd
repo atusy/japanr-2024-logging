@@ -1,5 +1,6 @@
 ---
 title: "Happy Structured Logging in R"
+subtitle: "構造化ログ入門.R"
 author: atusy
 output:
   litedown::html_format:
@@ -361,67 +362,13 @@ logger::log_info(message = "Program started.")
 
 ---
 
-## Log Schema?
+## Demo of logging in a Shiny app
+  
+<https://github.com/atusy/japanr-2024-logging>
 
-Should be easy to analyze
-
-| key | type | desc |
-| --- | --- | --- |
-| time | string | when the log is generated |
-| level | string | severity |
-| ns | string | namespace |
-| message | string | static message |
-| session_id | string | unique per access |
-| trace_id | string | unique per request |
-| span_id | string | unique per task |
-| value | any | a value related to the message |
-| context | named list | additional context |
-
----
-
-### Why static message?
-
-easy to analyze (e.g., `dplyr::filter()` and `dplyr::group_by()`)
-
-```{r, comment=""}
-x <- 1
-logger::log_info(
-  message = "x is defined", # not glue::glue("x is {x}")
-  value = x
-)
-````
-
----
-
-### What are the various identifiers?
-
-- **session_id**
-    - R sessions that loads the package
-    - browser sessions in Shiny app
-- **trace_id**
-    - function calls
-    - user-interactions in Shiny app
-- **span_id**: unique per task
-    - various tasks with the same trace_id
-
-These keywords typically appears in observability engineering.
-
----
-
-### What is the context?
-
-Some additional information that is not suitable for `value`.
-
----
-
-### What is the value?
-
-value related to the message
-
-```{r, comment=""}
-f <- function(x) {
-  logger::log_info(message = "f(x) is called", value = x)
-}
+```bash
+JAPANR2024_LOG_LEVEL=INFO R --no-save -e 'devtools::load_all(); run()'
+JAPANR2024_LOG_LEVEL=DEBUG R --no-save -e 'devtools::load_all(); run()'
 ```
 
 ---
@@ -439,8 +386,6 @@ logdata <- system.file("extdata/japanr2024.jsonl", package = "japanr2024") |>
 
 ## Error count
 
-Oh no! Many requests suffer errors!
-
 ```{r, attr.source=".r .fold", cache=FALSE}
 logdata |>
   dplyr::summarize(
@@ -451,35 +396,32 @@ logdata |>
   ggplot2::ggplot() +
   ggplot2::aes(time, errors) +
   ggplot2::geom_point() +
-  ggplot2::scale_x_datetime(name = "", date_breaks = "10 sec")
+  ggplot2::scale_x_datetime(name = "Requested at", date_breaks = "10 sec")
 ```
+
+Oh no! Many requests suffer errors!
 
 ---
 
-## Request response time
-
-Hmm... users have to wait for several seconds...
+## Response time
 
 ```{r, attr.source=".r .fold", cache=FALSE}
 logdata |>
-  dplyr::mutate(start = min(time), .by = "trace_id") |>
   dplyr::reframe(
-    start = min(start),
-    start_span = time[message == "Received request"],
-    end_span = time[message == "Processed request"],
-    duration = end_span - start_span,
+    start = min(time),
+    duration = max(time) - start,
     locations = lengths(value[message == "Locations parsed"]),
     .by = "trace_id"
   ) |>
   ggplot2::ggplot() +
   ggplot2::aes(start, duration, color = locations) +
   ggplot2::geom_point() +
-  ggplot2::scale_x_datetime(name = "", date_breaks = "10 sec") +
-  ggplot2::scale_y_continuous() +
+  ggplot2::scale_x_datetime(name = "Requested at", date_breaks = "10 sec") +
+  ggplot2::scale_y_continuous(name = "Response time") +
   NULL
 ```
 
-
+Hmm... users have to wait for several seconds...
 
 ---
 
@@ -504,6 +446,7 @@ logdata |>
     y = location, yend = location,
     color = error,
   ) +
+  ggplot2::geom_point() +
   ggplot2::geom_segment() +
   ggplot2::facet_grid(rows = "trace_id", scales = "free_y") +
   ggplot2::theme(
@@ -526,11 +469,14 @@ logdata |>
 
 # Ideas to solve the issues
 
----
-
-## Slow down a reactive expression with debounce/throttle
-
-<https://shiny.posit.co/r/reference/shiny/1.9.0/debounce.html>
+- Improve performance by
+    - reduceing the number of requests
+        - add button to submit the request
+        - slowing down a reactive expression with debounce/throttle \
+          <https://shiny.posit.co/r/reference/shiny/1.9.0/debounce.html>
+    - memoising slow functions
+- Supress unimportant error logs by
+    - handling errors with try-catch
 
 ---
 
@@ -552,7 +498,9 @@ forecast <- function(x) {
 }
 ```
 
-## Try-catch
+---
+
+## Handling errors with try-catch
 
 ```{r}
 geocode <- function(x) {
