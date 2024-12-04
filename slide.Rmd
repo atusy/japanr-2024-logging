@@ -348,7 +348,7 @@ logger::log_info(message = "Program started.")
 
 ---
 
-## In Package
+## **logger** in package
 
 - Key points:
   - Configure **logger** with `.onLoad()`
