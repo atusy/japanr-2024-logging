@@ -104,7 +104,7 @@ Avoid reinvention with `print`, unless intentionally.
 
 ## Control output destinations
 
-- stdout
+- console (stdout/stderr)
 - file
 - DB
 - SaaS (e.g., Datadog, New Relic, ...)
