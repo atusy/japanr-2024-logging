@@ -65,16 +65,16 @@ The **[logger]** package helps you.
 
 ---
 
-# Why logging library?
+# Why not print?
 
-Because `print` is not enough to
-
-- generate analyzable logs
-- threshold by severity
-- control output destinations
-- distinguish program output from logging
-    - typically on CLI tools
-    - less important in R
+- `print`-debugging is not suitable for long-term maintenance.
+- `print`-logging lacks some featuers
+    - generate analyzable logs
+    - threshold by log level
+    - control output destinations
+    - distinguish program output from logging
+        - typically on CLI tools
+        - less important in R
 
 Avoid reinvention with `print`, unless intentionally.
 
