@@ -82,12 +82,12 @@ Avoid reinvention with `print`, unless intentionally.
 
 ## Generate analyzable logs
 
-- has machine readable format (e.g., JSON Lines)
 - has traceable context
     - timestamp
     - severity
     - message
     - ...
+- has machine readable format (e.g., JSON Lines)
 
 <style>
 .jsonl pre { white-space: pre; }
