@@ -1,0 +1,12 @@
+services:
+  r:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8788:8787"
+    environment:
+      - USER=rstudio
+      - PASSWORD=password
+    volumes:
+      - .:/home/rstudio/japanr-2024-logging
