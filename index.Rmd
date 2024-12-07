@@ -175,7 +175,7 @@ Typically **JSON Lines**.
 {"time":"2024-12-04 21:07:28","level":"WARN","message":"Some warning."}
 ```
 
-Then, packages parse them and outputs data frame (e.g., **jsonlite**, **yyjsonr**, ...).
+Then, packages parse them and outputs data frame (e.g., **jsonlite**, **yyjsonr**, **duckdb**, ...).
 
 ```{r, echo=FALSE}
 yyjsonr::read_ndjson_str(paste(
@@ -256,6 +256,13 @@ logger::log_info(message = glue::glue("x is {x}"))
 # GOOD: static message and dynamic value are tidyverse-friendly
 logger::log_info(message = "x is defined", value = x)
 ````
+
+---
+
+## Cautions for dynamic value
+
+- do not inlude sensitive information
+- do not include too large data
 
 ---
 

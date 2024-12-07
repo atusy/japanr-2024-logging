@@ -156,7 +156,7 @@ logger::log_debug(message = &quot;Received parameters&quot;, value = params)
 <pre><code class="language-json">{&quot;time&quot;:&quot;2024-12-04 21:07:28&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Program started.&quot;}
 {&quot;time&quot;:&quot;2024-12-04 21:07:28&quot;,&quot;level&quot;:&quot;WARN&quot;,&quot;message&quot;:&quot;Some warning.&quot;}
 </code></pre>
-<p>Then, packages parse them and outputs data frame (e.g., <strong>jsonlite</strong>, <strong>yyjsonr</strong>, …).</p>
+<p>Then, packages parse them and outputs data frame (e.g., <strong>jsonlite</strong>, <strong>yyjsonr</strong>, <strong>duckdb</strong>, …).</p>
 <table>
 <thead>
 <tr>
@@ -334,13 +334,19 @@ logger::log_debug(message = &quot;Received parameters&quot;, value = params)
 x &lt;- 1
 logger::log_info(message = glue::glue(&quot;x is {x}&quot;))
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-07 11:40:48&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is 1&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-07 14:08:20&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is 1&quot;}
 </code></pre>
 <pre><code class="language-r"># GOOD: static message and dynamic value are tidyverse-friendly
 logger::log_info(message = &quot;x is defined&quot;, value = x)
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-07 11:40:48&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
+<pre><code>{&quot;time&quot;:&quot;2024-12-07 14:08:20&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
 </code></pre>
+<hr />
+<h2 id="sec:cautions-for-dynamic-value">Cautions for dynamic value</h2>
+<ul>
+<li>do not inlude sensitive information</li>
+<li>do not include too large data</li>
+</ul>
 <hr />
 <h2 id="sec:add-identifiers-for-traceability_1">Add identifiers for traceability</h2>
 <table>
@@ -533,7 +539,7 @@ logger::log_layout(logger::layout_json_parser(c(&quot;time&quot;, &quot;level&qu
 <pre><code class="language-r"># Log
 logger::log_info(message = &quot;Program started.&quot;)
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-07 11:40:48&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-07 14:08:20&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
 </code></pre>
 <hr />
 <h2 id="sec:logger-in-package"><strong>logger</strong> in package</h2>
