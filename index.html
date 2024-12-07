@@ -334,12 +334,12 @@ logger::log_debug(message = &quot;Received parameters&quot;, value = params)
 x &lt;- 1
 logger::log_info(message = glue::glue(&quot;x is {x}&quot;))
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-07 01:08:21&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is 1&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-07 11:40:48&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is 1&quot;}
 </code></pre>
 <pre><code class="language-r"># GOOD: static message and dynamic value are tidyverse-friendly
 logger::log_info(message = &quot;x is defined&quot;, value = x)
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-07 01:08:21&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
+<pre><code>{&quot;time&quot;:&quot;2024-12-07 11:40:48&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;x is defined&quot;,&quot;value&quot;:1}
 </code></pre>
 <hr />
 <h2 id="sec:add-identifiers-for-traceability_1">Add identifiers for traceability</h2>
@@ -533,7 +533,7 @@ logger::log_layout(logger::layout_json_parser(c(&quot;time&quot;, &quot;level&qu
 <pre><code class="language-r"># Log
 logger::log_info(message = &quot;Program started.&quot;)
 </code></pre>
-<pre><code>{&quot;time&quot;:&quot;2024-12-07 01:08:21&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
+<pre><code>{&quot;time&quot;:&quot;2024-12-07 11:40:48&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;ns&quot;:&quot;global&quot;,&quot;message&quot;:&quot;Program started.&quot;}
 </code></pre>
 <hr />
 <h2 id="sec:logger-in-package"><strong>logger</strong> in package</h2>
@@ -711,8 +711,18 @@ forecast &lt;- function(x) {
 <hr />
 <h1 id="chp:enjoy-happy-structured-logging">ENJOY HAPPY STRUCTURED LOGGING!</h1>
 <ul>
+<li>Remarks
+<ul>
 <li>Record logs to identify (potential) issues!</li>
 <li>Use structured logs and analyze them with lovely tidyverse!</li>
+</ul>
+</li>
+<li>References
+<ul>
+<li>Slide: <a href="https://atusy.github.io/japanr-2024-logging/">https://atusy.github.io/japanr-2024-logging/</a></li>
+<li>Repository: <a href="https://github.com/atusy/japanr-2024-logging">https://github.com/atusy/japanr-2024-logging</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" defer></script>

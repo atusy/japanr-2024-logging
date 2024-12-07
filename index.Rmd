@@ -524,5 +524,9 @@ geocode <- function(x) {
 
 # ENJOY HAPPY STRUCTURED LOGGING!
 
-- Record logs to identify (potential) issues!
-- Use structured logs and analyze them with lovely tidyverse!
+- Remarks
+  - Record logs to identify (potential) issues!
+  - Use structured logs and analyze them with lovely tidyverse!
+- References
+  - Slide: <https://atusy.github.io/japanr-2024-logging/>
+  - Repository: <https://github.com/atusy/japanr-2024-logging>
